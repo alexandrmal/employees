@@ -16,7 +16,12 @@ class EmployeesAddForm extends Component {
             [e.target.name]: e.target.value
         })
     }
+    someFunc = (e) => {
+        console.log('Some function called');
+    }
+
     render() {
+        const {onAdd} = this.props;
         const {name, salary} = this.state;
         return (
             <div className="app-add-form">
@@ -25,19 +30,22 @@ class EmployeesAddForm extends Component {
                     className="add-form d-flex">
                     <input type="text"
                         className="form-control new-post-label"
+                        id="user-name"
                         placeholder="Name"
                         name="name"
                         value={name}
                         onChange={this.onValueChange} />
                     <input type="number"
                         className="form-control new-post-label"
+                        id="user-salary"
                         placeholder="Pay rate $"
                         name="salary"
                         value={salary}
                         onChange={this.onValueChange} />
     
-                    <button type="submit"
-                        className="btn btn-outline-light">Add</button>
+                    <button type="button"
+                        className="btn btn-light"
+                        onClick={onAdd} >Add</button>
                 </form>
             </div>
         );
