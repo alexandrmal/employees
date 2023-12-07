@@ -16,8 +16,15 @@ class EmployeesAddForm extends Component {
             [e.target.name]: e.target.value
         })
     }
-    someFunc = (e) => {
-        console.log('Some function called');
+
+    onSubmit = (e) => {
+        e.preventDefault();
+        if (this.state.name.length < 3 || !this.state.salary) return;
+        this.props.onAdd(this.state.name, this.state.salary);
+        this.setState({
+            name: '',
+            salary: ''
+        })
     }
 
     render() {
@@ -27,7 +34,8 @@ class EmployeesAddForm extends Component {
             <div className="app-add-form">
                 <h3>Add new employees</h3>
                 <form
-                    className="add-form d-flex">
+                    className="add-form d-flex"
+                    onSubmit = {this.onSubmit}>
                     <input type="text"
                         className="form-control new-post-label"
                         id="user-name"
@@ -43,9 +51,8 @@ class EmployeesAddForm extends Component {
                         value={salary}
                         onChange={this.onValueChange} />
     
-                    <button type="button"
-                        className="btn btn-light"
-                        onClick={onAdd} >Add</button>
+                    <button type="submit"
+                        className="btn btn-outline-light">Add</button>
                 </form>
             </div>
         );
