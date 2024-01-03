@@ -20,8 +20,7 @@ class App extends Component {
                 {name: 'Carl W.', salary: 5000, increase: false, rise: false, id: 3}
             ],
             term: '',
-            filterRise: false,
-            filterSalary: false
+            filter: 'all-employees'
         }
         this.maxId = 4;
     }
@@ -74,50 +73,26 @@ class App extends Component {
         this.setState({term});
     }
 
-    onTopEmployees = (items, filterRise, filterSalary) => {
-        if (filterRise === false && filterSalary === false) {
+    topEmployees = (items, filter) => {
+        if (filter === 'top-employees') {
+            return items.filter(item=>item.rise)
+        }  else if (filter === 'top-salary') {
+            return items.filter(item=>item.salary >= 1000)
+        } else {
             return items;
-        } else if (filterRise === true) {
-            return items.filter(item => {
-                return item.rise === true;
-            })
-        }  else if (filterSalary === true) {
-            return items.filter(item => {
-                return item.salary >= 1000;
-            })
-        } 
+        }
     }
 
-    onFilterUpdate = (e) => {
-        if (e.target.getAttribute('data-value') === 'top-employees') {
-            this.setState({
-                filterRise: !this.state.filterRise,
-                filterSalary: false
-            })
-        } else if (e.target.getAttribute('data-value') === 'top-salary') {
-            this.setState({
-                filterSalary: !this.state.filterSalary,
-                filterRise: false
-            })
-        } else {
-            this.setState({
-                filterRise: false,
-                filterSalary: false
-            })
-        }
-        const filterButtons = document.querySelectorAll('.js-filter-btn');
-        filterButtons.forEach(filterBtn => {
-            filterBtn.classList.remove('active');
-        });
-        e.target.classList.add('active');
+    onFilterUpdate = (filter) => {
+        this.setState({filter})
     }
 
     render() {
-        const {data, term, filterRise, filterSalary} = this.state;
+        const {data, term, filter} = this.state;
         const employees = this.state.data.length;
         const increased = this.state.data.filter(item  => item.increase).length;
-        let visibleData = this.searchEmp(data, term);
-        visibleData = this.onTopEmployees(visibleData, filterRise, filterSalary);
+        const visibleData = this.topEmployees(this.searchEmp(data, term), filter);
+
         return (
             <div className="app">
                 <AppInfo
@@ -125,7 +100,7 @@ class App extends Component {
                 increased = {increased}/>
                 <div className="search-panel">
                     <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
-                    <AppFilter  onFilterUpdate={this.onFilterUpdate}/>
+                    <AppFilter filter={filter} onFilterUpdate={this.onFilterUpdate}/>
                 </div>
     
                 <EmployeesList
