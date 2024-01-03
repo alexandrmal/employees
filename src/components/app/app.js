@@ -18,7 +18,10 @@ class App extends Component {
                 {name: 'John C.', salary: 800, increase: false, rise: true, id: 1},
                 {name: 'Alex M.', salary: 3000, increase: true, rise: false, id: 2},
                 {name: 'Carl W.', salary: 5000, increase: false, rise: false, id: 3}
-            ]
+            ],
+            term: '',
+            filterRise: false,
+            filterSalary: false
         }
         this.maxId = 4;
     }
@@ -58,21 +61,75 @@ class App extends Component {
         }))
     }
 
+    searchEmp = (items, term) => {
+        if (term.length === 0) {
+            return items;
+        }
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1;
+        })
+    }
+    
+    onUpdateSearch = (term) => {
+        this.setState({term});
+    }
+
+    onTopEmployees = (items, filterRise, filterSalary) => {
+        if (filterRise === false && filterSalary === false) {
+            return items;
+        } else if (filterRise === true) {
+            return items.filter(item => {
+                return item.rise === true;
+            })
+        }  else if (filterSalary === true) {
+            return items.filter(item => {
+                return item.salary >= 1000;
+            })
+        } 
+    }
+
+    onFilterUpdate = (e) => {
+        if (e.target.getAttribute('data-value') === 'top-employees') {
+            this.setState({
+                filterRise: !this.state.filterRise,
+                filterSalary: false
+            })
+        } else if (e.target.getAttribute('data-value') === 'top-salary') {
+            this.setState({
+                filterSalary: !this.state.filterSalary,
+                filterRise: false
+            })
+        } else {
+            this.setState({
+                filterRise: false,
+                filterSalary: false
+            })
+        }
+        const filterButtons = document.querySelectorAll('.js-filter-btn');
+        filterButtons.forEach(filterBtn => {
+            filterBtn.classList.remove('active');
+        });
+        e.target.classList.add('active');
+    }
+
     render() {
+        const {data, term, filterRise, filterSalary} = this.state;
         const employees = this.state.data.length;
         const increased = this.state.data.filter(item  => item.increase).length;
+        let visibleData = this.searchEmp(data, term);
+        visibleData = this.onTopEmployees(visibleData, filterRise, filterSalary);
         return (
             <div className="app">
                 <AppInfo
                 employees = {employees}
                 increased = {increased}/>
                 <div className="search-panel">
-                    <SearchPanel/>
-                    <AppFilter/>
+                    <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
+                    <AppFilter  onFilterUpdate={this.onFilterUpdate}/>
                 </div>
     
                 <EmployeesList
-                data={this.state.data}
+                data={visibleData}
                 onDelete={this.deteleItem}
                 onToggleProp={this.onToggleProp}/>
     
