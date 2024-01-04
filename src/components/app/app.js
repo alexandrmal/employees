@@ -1,5 +1,6 @@
 
 import { Component } from 'react';
+import styled from 'styled-components'
 
 import AppInfo from '../app-info/app-info';
 import SearchPanel from '../search-panel/search-panel';
@@ -93,8 +94,13 @@ class App extends Component {
         const increased = this.state.data.filter(item  => item.increase).length;
         const visibleData = this.topEmployees(this.searchEmp(data, term), filter);
 
+        const Wrapper = styled.div`
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 20px 20px 20px rgba(0,0,0, .2);
+        `;
         return (
-            <div className="app">
+            <Wrapper className="app">
                 <AppInfo
                 employees = {employees}
                 increased = {increased}/>
@@ -110,7 +116,7 @@ class App extends Component {
     
                 <EmployeesAddForm
                 onAdd={this.addItem} />
-            </div>
+            </Wrapper>
         );
     }
 }
